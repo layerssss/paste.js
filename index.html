@@ -40,7 +40,7 @@
               $(el).css('background-color', '');
             })
             .on('pasteImage', function(ev, data){
-              $('<p>image: <img src="' + data.dataURL + '" />.</p>').appendTo(el);
+              $('<p>image(' + data.width + 'x' + data.height + '): <img src="' + data.dataURL + '" />.</p>').appendTo(el);
             })
             .on('pasteText', function(ev, data){
               $('<p>text: ' + data.text + '</p>').appendTo(el);
