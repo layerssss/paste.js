@@ -1,6 +1,6 @@
 {
   "name": "paste.js",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "authors": [
     "Michael Yin <layerssss@gmail.com>"
   ],
@@ -10,7 +10,10 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "paste.coffee",
+    "Makefile",
+    "index.html"
   ],
   "dependencies": {
     "jquery": "~2.1.0"
