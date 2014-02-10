@@ -13,7 +13,7 @@ usage
 
 ```
 // jQuery needed
-paste = $.paste();
+paste = $.paste().appendTo('body');
 paste.on('pasteImage', function (ev, data){
   console.log("dataURL: " + data.dataURL)
 });
