@@ -1,7 +1,6 @@
 $ = jQuery
 readImagesFromEditable = (element, cb)->
   setTimeout (->
-    console.log $(element).find('img').length
     $(element).find('img').each (i, img)->
       getImageData img.src, cb
    ), 1

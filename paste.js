@@ -6,7 +6,6 @@
 
   readImagesFromEditable = function(element, cb) {
     return setTimeout((function() {
-      console.log($(element).find('img').length);
       return $(element).find('img').each(function(i, img) {
         return getImageData(img.src, cb);
       });
