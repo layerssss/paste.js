@@ -1,12 +1,16 @@
 paste.js
 =====
 
-paste.js is an interface to read from clipboard data ( text / image ) in different browsers. Currenttly only tested under: 
+paste.js is an interface to read from clipboard data ( text / image ) in different browsers. Currenttly only tested (and works) under: 
 
 * IE 11 (Windows 7)
 * Chrome 32 (Windows 7 / OSX)
 * Firefox 26 (Windows 7 / OSX)
-* Opera 12.15 (OSX) (text only)
+
+Image pasting is NOT working under:
+
+* Opera
+* Safari
 
 usage
 -----
