@@ -1,9 +1,6 @@
-
 <!doctype html>
 <html>
   <head>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  <script type="text/javascript" src="paste.js"></script>
   <meta charset="utf-8">
   <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
   <title>paste.js</title>
@@ -15,45 +12,16 @@
       padding: .5em;
       margin: 0.5em auto;
     }
-    .demo{
-      background-color: #ccc;
-    }
-    .demo img{
-      width: 30px;
-      height: 30px;
+    iframe{
+      height: 25em;
     }
   </style>
   <body>
-    <div><a href="https://github.com/Puffant/paste.js/blob/master/index.html">view this example's source code</a></div>
-    <div><a href="https://github.com/Puffant/paste.js">github.com/Puffant/paste.js</a></div>
-    <div class='demo'>click, then paste ( text / image )</div>
-    <div class='demo'>click, then paste ( text / image )</div>
-    <div class='demo'>click, then paste ( text / image )</div>
-    <div class='demo'>click, then paste ( text / image )</div>
-    <script type="text/javascript">
-      $(function(){
-        $('.demo').each(function(i, el){
-          var paste = (new $.paste()).appendTo(el)
-            .on('focus', function(){
-              $(el).css('background-color', 'steelblue');
-            })
-            .on('blur', function(){
-              $(el).css('background-color', '');
-            })
-            .on('pasteImage', function(ev, data){
-              $('<p>image(' + data.width + 'x' + data.height + '): <img src="' + data.dataURL + '" />.</p>').appendTo(el);
-            })
-            .on('pasteText', function(ev, data){
-              $('<p>text: ' + data.text + '</p>').appendTo(el);
-            });
-          $(el).click(function(){
-            $(paste).focus();
-          });
-          if(i == 0){
-            paste.focus();
-          }
-        });
-      });
-    </script>
+    <div>
+      <h1>Paste.js</h1>
+      <p><a href="https://github.com/Puffant/paste.js">github.com/Puffant/paste.js</a></p>
+      <iframe width="100%" height="300" src="http://jsfiddle.net/layerssss/84Hda/embedded/result,js,html/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+      <iframe width="100%" height="300" src="http://jsfiddle.net/layerssss/59YWx/embedded/result,js,html/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+    </div>
   </body>
 </html>
