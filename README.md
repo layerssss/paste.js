@@ -33,4 +33,4 @@ paste.remove();
 more
 -----
 
-see [this example](http://puffant.github.io/paste.js/)
+see [this example](http://micy.in/paste.js/)
