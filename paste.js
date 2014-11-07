@@ -45,6 +45,8 @@
         clipboard = this.getClipboardData(ev);
         if (this.hasClipboardItemsSupport(clipboard)) {
           return this.handleClipboardItems(clipboard);
+        } else if (this.hasClipboardFilesSupport(clipboard)) {
+          return this.handleClipboardFiles(clipboard, ev);
         } else if (this.hasDataTypes(clipboard)) {
           return this.handleClipboardData(clipboardData);
         } else {
@@ -71,6 +73,35 @@
         }
         if (item.type === 'text/plain') {
           _results.push(item.getAsString(function(string) {
+            return _this.triggerEvent('pasteText', {
+              text: string
+            });
+          }));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    PasteManager.prototype.handleClipboardFiles = function(clipboardData, ev) {
+      var file, reader, _i, _len, _ref, _results,
+        _this = this;
+      _ref = clipboardData.files;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        file = _ref[_i];
+        if (file.type.match(/^image\//)) {
+          reader = new FileReader();
+          reader.onload = function(event) {
+            return _this.retrieveImageDataFromDomElement(event.target.result, function(data) {
+              return _this.triggerEvent('pasteImage', data);
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+        if (file.type === 'text/plain') {
+          _results.push(file.getAsString(function(string) {
             return _this.triggerEvent('pasteText', {
               text: string
             });
@@ -110,8 +141,13 @@
       return clipboardData.items && clipboardData.items.length;
     };
 
+    PasteManager.prototype.hasClipboardFilesSupport = function(clipboardData) {
+      return clipboardData.files && clipboardData.files.length;
+    };
+
     PasteManager.prototype.hasDataTypes = function(clipboardData) {
-      return clipboardData.types.length;
+      var _ref;
+      return clipboardData != null ? (_ref = clipboardData.types) != null ? _ref.length : void 0 : void 0;
     };
 
     PasteManager.prototype.getClipboardData = function(ev) {

@@ -29,6 +29,8 @@ class PasteManager
       clipboard = @getClipboardData(ev)
       if @hasClipboardItemsSupport(clipboard) # CHROME only
         @handleClipboardItems(clipboard)
+      else if @hasClipboardFilesSupport(clipboard) # CHROME only
+        @handleClipboardFiles(clipboard, ev)
       else if @hasDataTypes(clipboard) # SAFARI only (images/text), FF only supports this for text
         @handleClipboardData(clipboardData)
       else # FF images
@@ -45,6 +47,18 @@ class PasteManager
         reader.readAsDataURL item.getAsFile()
       if item.type == 'text/plain'
         item.getAsString (string) =>
+          @triggerEvent 'pasteText', text: string
+
+  handleClipboardFiles: (clipboardData, ev) ->
+    for file in clipboardData.files
+      if file.type.match /^image\//
+        reader = new FileReader()
+        reader.onload = (event) =>
+          @retrieveImageDataFromDomElement event.target.result, (data) =>
+            @triggerEvent 'pasteImage', data
+        reader.readAsDataURL file
+      if file.type == 'text/plain'
+        file.getAsString (string) =>
           @triggerEvent 'pasteText', text: string
 
   # [Safari TEXT/IMAGE, Firefox TEXT] handle "minimalistic" clipboaddata.getData implementations, based on "types"
@@ -71,10 +85,13 @@ class PasteManager
     # browser like Chrome support clipboard.items for images and text
     return clipboardData.items && clipboardData.items.length
 
+  hasClipboardFilesSupport: (clipboardData) ->
+    # browser like Chrome support clipboard.items for images and text
+    return clipboardData.files && clipboardData.files.length
   # fallback, if items are not implemented, this is basically the "minimalistic" clipboardAPI implementation
   # mainly this is yet only useful for text, images are detected, but you cannot access them ( Safari )
   hasDataTypes: (clipboardData) ->
-    return clipboardData.types.length
+    return clipboardData?.types?.length
 
   # get clipboarddata of the event
   getClipboardData: (ev) ->
@@ -96,6 +113,7 @@ class PasteManager
         left: -100
         overflow: 'hidden'
     .appendTo('body')
+
     @monitoredContainer.on 'paste', (ev) =>
       @handlePasteEvent(ev)
 
