@@ -14,7 +14,7 @@
   PasteManager = (function() {
     PasteManager.pasteArea = null;
 
-    PasteManager.isPastedImageCallback = null;
+    PasteManager.skipImageCallback = null;
 
     PasteManager.deletePastedImage = true;
 
@@ -29,8 +29,8 @@
       if ((settings != null ? settings.pasteArea : void 0) != null) {
         this.pasteArea = settings.pasteArea;
       }
-      if ((settings != null ? settings.isPastedImageFilterCallback : void 0) != null) {
-        this.isPastedImageCallback = settings.isPastedImageFilterCallback;
+      if ((settings != null ? settings.skipImageCallback : void 0) != null) {
+        this.skipImageCallback = settings.skipImageCallback;
       }
       if ((settings != null ? settings.deletePastedImage : void 0) != null) {
         this.deletePastedImage = settings.deletePastedImage;
@@ -48,7 +48,7 @@
         } else if (this.hasClipboardFilesSupport(clipboard)) {
           return this.handleClipboardFiles(clipboard, ev);
         } else if (this.hasDataTypes(clipboard)) {
-          return this.handleClipboardData(clipboardData);
+          return this.handleClipboardData(clipboard);
         } else {
           return this.handlePasteArea(this.pasteArea);
         }
@@ -220,7 +220,7 @@
       var _this = this;
       return setTimeout((function() {
         return _this.pasteArea.find('img').each(function(i, img) {
-          if (_this.isPastedImageCallback && !_this.isPastedImageCallback(img)) {
+          if (_this.skipImageCallback && _this.skipImageCallback(img)) {
             return;
           }
           _this.retrieveImageDataFromDomElement(img.src, callback);

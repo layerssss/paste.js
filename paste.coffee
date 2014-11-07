@@ -5,7 +5,7 @@ $.paste = (pasteContainer, settings = {}) ->
 class PasteManager
   # those things are only needed for "bad browser implementations" like Firefox and Safari
   @pasteArea = null # (optional, by default @monitoredContainer) this is used, when the browser does not support the clipboardAPI that way, that we can access the image data in the clipboard object (e.g. FF, Safari)
-  @isPastedImageCallback = null # if the image is pasted in your main content, use this image to determine, which is the yet new pasted image (unhandled). Needed for Firefox in e.g. WYSIWYG-Editors
+  @skipImageCallback = null # if the image is pasted in your main content, use this image to determine, which is the yet new pasted image (unhandled). Needed for Firefox in e.g. WYSIWYG-Editors
   @deletePastedImage = true # in Firefox mode, the image is pasted into a container with designer mode on. like WYSIWYG. Usually we just catch that image, handle it over to the pasteImage event and delete it in the editor
 
   # general stuff
@@ -16,7 +16,7 @@ class PasteManager
   constructor: (monitoredContainer, settings = {})->
     # settings
     @pasteArea = settings.pasteArea if settings?.pasteArea?
-    @isPastedImageCallback = settings.isPastedImageFilterCallback if settings?.isPastedImageFilterCallback?
+    @skipImageCallback = settings.skipImageCallback if settings?.skipImageCallback?
     @deletePastedImage = settings.deletePastedImage if settings?.deletePastedImage?
 
     @monitoredContainer = $(monitoredContainer)
@@ -32,7 +32,7 @@ class PasteManager
       else if @hasClipboardFilesSupport(clipboard) # CHROME only
         @handleClipboardFiles(clipboard, ev)
       else if @hasDataTypes(clipboard) # SAFARI only (images/text), FF only supports this for text
-        @handleClipboardData(clipboardData)
+        @handleClipboardData(clipboard)
       else # FF images
         @handlePasteArea(@pasteArea)
 
@@ -151,7 +151,7 @@ class PasteManager
   findImagesFromEditable: (callback)->
     setTimeout ( =>
       @pasteArea.find('img').each (i, img) =>
-        return if(@isPastedImageCallback && !@isPastedImageCallback(img))
+        return if(@skipImageCallback && @skipImageCallback(img))
         @retrieveImageDataFromDomElement img.src, callback
         $(img).remove()
     ), 1
