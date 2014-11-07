@@ -2,28 +2,40 @@
 (function() {
   var PasteManager;
 
-  $.paste = function(pasteContainer) {
+  $.paste = function(pasteContainer, settings) {
     var pm;
-    pm = new PasteManager(pasteContainer);
+    if (settings == null) {
+      settings = {};
+    }
+    pm = new PasteManager(pasteContainer, settings);
     return pm.getEventPropagator();
   };
 
   PasteManager = (function() {
-    PasteManager.fallbackPasteArea = null;
+    PasteManager.pasteArea = null;
+
+    PasteManager.isPastedImageCallback = null;
+
+    PasteManager.deletePastedImage = true;
 
     PasteManager.monitoredContainer = null;
 
     PasteManager.eventPropagotor = null;
 
-    function PasteManager(monitoredContainer) {
+    function PasteManager(monitoredContainer, settings) {
+      if (settings == null) {
+        settings = {};
+      }
+      if ((settings != null ? settings.pasteArea : void 0) != null) {
+        this.pasteArea = settings.pasteArea;
+      }
+      if ((settings != null ? settings.isPastedImageFilterCallback : void 0) != null) {
+        this.isPastedImageCallback = settings.isPastedImageFilterCallback;
+      }
+      if ((settings != null ? settings.deletePastedImage : void 0) != null) {
+        this.deletePastedImage = settings.deletePastedImage;
+      }
       this.monitoredContainer = $(monitoredContainer);
-      this.eventPropagotor = $(document.createElement('div')).prop('contenteditable', true).css({
-        width: 1,
-        height: 1,
-        position: 'fixed',
-        left: -100,
-        overflow: 'hidden'
-      });
       this.registerPasteListener();
     }
 
@@ -36,7 +48,7 @@
         } else if (this.hasDataTypes(clipboard)) {
           return this.handleClipboardData(clipboardData);
         } else {
-          return this.handlePasteArea(this.fallbackPasteArea);
+          return this.handlePasteArea(this.pasteArea);
         }
       }
     };
@@ -81,8 +93,11 @@
 
     PasteManager.prototype.handlePasteArea = function() {
       var _this = this;
+      if (!this.pasteArea) {
+        this.pasteArea = this.monitoredContainer;
+      }
       return this.findImagesFromEditable(function(data) {
-        return _this.fallbackPasteArea.trigger('pasteImage', data);
+        return _this.triggerEvent('pasteImage', data);
       });
     };
 
@@ -114,6 +129,13 @@
 
     PasteManager.prototype.registerPasteListener = function() {
       var _this = this;
+      this.eventPropagotor = $(document.createElement('div')).prop('contenteditable', true).css({
+        width: 1,
+        height: 1,
+        position: 'fixed',
+        left: -100,
+        overflow: 'hidden'
+      }).appendTo('body');
       return this.monitoredContainer.on('paste', function(ev) {
         return _this.handlePasteEvent(ev);
       });
@@ -122,7 +144,7 @@
     PasteManager.prototype.createHiddenPasteArea = function() {
       var div;
       div = document.createElement('div');
-      return this.fallbackPasteArea = $(div).prop('contenteditable', true).css({
+      return this.pasteArea = $(div).prop('contenteditable', true).css({
         width: 1,
         height: 1,
         position: 'fixed',
@@ -161,8 +183,12 @@
     PasteManager.prototype.findImagesFromEditable = function(callback) {
       var _this = this;
       return setTimeout((function() {
-        return _this.fallbackPasteArea.find('img').each(function(i, img) {
-          return _this.retrieveImageDataFromDomElement(img.src, callback);
+        return _this.pasteArea.find('img').each(function(i, img) {
+          if (_this.isPastedImageCallback && !_this.isPastedImageCallback(img)) {
+            return;
+          }
+          _this.retrieveImageDataFromDomElement(img.src, callback);
+          return $(img).remove();
         });
       }), 1);
     };
