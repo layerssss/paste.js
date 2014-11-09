@@ -1,33 +1,36 @@
 paste.js
 =====
 
-paste.js is an interface to read from clipboard data ( text / image ) in different browsers. Currenttly only tested (and works) under: 
+paste.js is an interface to read data ( text / image ) from clipboard in different browsers. It also contains several hacks.
 
-* IE 11 (Windows 7)
-* Chrome 32 (Windows 7 / OSX)
-* Firefox 26 (Windows 7 / OSX)
+browser compatibility
+-----
 
-Image pasting is NOT working under:
-
-* Opera
-* Safari
+|                              | IE11 | Firefox 33 | Chrome 38 | Safari | Opera |
+|------------------------------|------|------------|-----------|--------|-------|
+| pasteText (non-inputable)    | ok   | ok         | ok        | ok     | ok    |
+| pasteText (textarea)         | ok   | ok         | ok        | ok     | ok    |
+| pasteText (contenteditable)  | ok   | ok         | ok        | ok     | ok    |
+| pasteImage (non-inputable)   | ok   | ok         | ok        |        |       |
+| pasteImage (textarea)        |      | ok         | ok        |        |       |
+| pasteImage (contenteditable) | ok   | ok         | ok        |        |       |
 
 usage
 -----
 
 ```
 // jQuery needed
-paste = $.paste().appendTo('body');
-paste.on('pasteImage', function (ev, data){
+$('.mydiv').pastableNonInputable();
+
+$('textarea').pastableTextarea();
+
+$('div[contenteditable]').pastableContenteditable();
+
+$('*').on('pasteImage', function (ev, data){
   console.log("dataURL: " + data.dataURL)
-});
-paste.on('pasteText', function (ev, data){
+}).on('pasteText', function (ev, data){
   console.log("text: " + data.text)
 });
-paste.focus(); // it's actually a hidden div element
-
-// ... when you don't need it anymore
-paste.remove();
 ```
 
 more
