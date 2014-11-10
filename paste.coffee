@@ -1,3 +1,9 @@
+### 
+paste.js is an interface to read data ( text / image ) from clipboard in different browsers. It also contains several hacks.
+
+https://github.com/layerssss/paste.js
+###
+
 $ = window.jQuery
 $.paste = (pasteContainer) ->
   console?.log "DEPRECATED: This method is deprecated. Please use $.fn.pastableNonInputable() instead."
@@ -5,15 +11,15 @@ $.paste = (pasteContainer) ->
   pm._container
 $.fn.pastableNonInputable = ->
   for el in @
-    paste = Paste.mountNonInputable el
+    Paste.mountNonInputable el
   @
 $.fn.pastableTextarea = ->
   for el in @
-    paste = Paste.mountTextarea el
+    Paste.mountTextarea el
   @
 $.fn.pastableContenteditable = ->
   for el in @
-    paste = Paste.mountContenteditable el
+    Paste.mountContenteditable el
   @
 
 dataURLtoBlob = (dataURL, sliceSize=512) ->
