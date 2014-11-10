@@ -42,18 +42,20 @@ class Paste
 
 
   @mountTextarea: (textarea)->
-    return @mountContenteditable textarea unless window.ClipboardEvent
-    # Firefox only
+    # Firefox & IE
+    return @mountContenteditable textarea unless window.ClipboardEvent || window.clipboardData
     paste = new Paste createHiddenEditable().insertBefore(textarea), textarea
-    $(textarea).on 'keypress', (ev)=>
-      return unless 'v' == String.fromCharCode ev.charCode
-      return unless ev.ctrlKey || ev.metaKey
-      paste._container.focus()
+    ctlDown = false
+    $(textarea).on 'keyup', (ev)-> 
+      ctlDown = false if ev.keyCode in [17, 224]
+    $(textarea).on 'keydown', (ev)-> 
+      ctlDown = true if ev.keyCode in [17, 224]
+      paste._container.focus() if ctlDown && ev.keyCode == 86
     $(paste._target).on 'pasteImage', =>
       $(textarea).focus()
     $(paste._target).on 'pasteText', =>
       $(textarea).focus()
-    
+  
     $(textarea).on 'focus', => $(textarea).addClass 'pastable-focus'
     $(textarea).on 'blur', => $(textarea).removeClass 'pastable-focus'
 
