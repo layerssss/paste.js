@@ -1,6 +1,6 @@
 {
   "name": "paste.js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "authors": [
     "Michael Yin <layerssss@gmail.com>"
   ],
@@ -16,6 +16,6 @@
     "index.html"
   ],
   "dependencies": {
-    "jquery": "~2.1.0"
+    "jquery": "*"
   }
 }
