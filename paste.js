@@ -76,22 +76,27 @@
     };
 
     Paste.mountTextarea = function(textarea) {
-      var paste;
-      if (!window.ClipboardEvent) {
+      var ctlDown, paste;
+      if (!(window.ClipboardEvent || window.clipboardData)) {
         return this.mountContenteditable(textarea);
       }
       paste = new Paste(createHiddenEditable().insertBefore(textarea), textarea);
-      $(textarea).on('keypress', (function(_this) {
-        return function(ev) {
-          if ('v' !== String.fromCharCode(ev.charCode)) {
-            return;
-          }
-          if (!(ev.ctrlKey || ev.metaKey)) {
-            return;
-          }
+      ctlDown = false;
+      $(textarea).on('keyup', function(ev) {
+        var _ref;
+        if ((_ref = ev.keyCode) === 17 || _ref === 224) {
+          return ctlDown = false;
+        }
+      });
+      $(textarea).on('keydown', function(ev) {
+        var _ref;
+        if ((_ref = ev.keyCode) === 17 || _ref === 224) {
+          ctlDown = true;
+        }
+        if (ctlDown && ev.keyCode === 86) {
           return paste._container.focus();
-        };
-      })(this));
+        }
+      });
       $(paste._target).on('pasteImage', (function(_this) {
         return function() {
           return $(textarea).focus();
