@@ -16,6 +16,25 @@ $.fn.pastableContenteditable = ->
     paste = Paste.mountContenteditable el
   @
 
+dataURLtoBlob = (dataURL, sliceSize=512) ->
+  return null unless m = dataURL.match /^data\:([^\;]+)\;base64\,(.+)$/
+  [m, contentType, b64Data] = m
+  byteCharacters = atob(b64Data)
+  byteArrays = []
+  offset = 0
+  while offset < byteCharacters.length
+    slice = byteCharacters.slice(offset, offset + sliceSize)
+    byteNumbers = new Array(slice.length)
+    i = 0
+    while i < slice.length
+      byteNumbers[i] = slice.charCodeAt(i)
+      i++
+    byteArray = new Uint8Array(byteNumbers)
+    byteArrays.push byteArray
+    offset += sliceSize
+  new Blob byteArrays,
+    type: contentType
+
 createHiddenEditable = ->
   $(document.createElement 'div')
   .attr 'contenteditable', true
@@ -112,8 +131,10 @@ class Paste
       dataURL = null
       try 
         dataURL = canvas.toDataURL 'image/png'
+        blob = dataURLtoBlob dataURL
       if dataURL
         @_target.trigger 'pasteImage',
+          blob: blob
           dataURL: dataURL
           width: loader.width
           height: loader.height

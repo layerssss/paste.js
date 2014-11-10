@@ -41,7 +41,8 @@
       $('.demo-textarea').pastableTextarea();
       $('.demo-contenteditable').pastableContenteditable();
       $('.demo').on('pasteImage', function(ev, data){
-        $('<div class="result">image: ' + data.width + ' x ' + data.height + '<img src="' + data.dataURL +'" ></div>').insertAfter(this);
+        var blobUrl = URL.createObjectURL(data.blob);
+        $('<div class="result">image: ' + data.width + ' x ' + data.height + '<img src="' + data.dataURL +'" ><a href="' + blobUrl + '">' + blobUrl + '</div>').insertAfter(this);
       }).on('pasteText', function(ev, data){
         $('<div class="result"></div>').text('text: "' + data.text + '"').insertAfter(this);
       });
