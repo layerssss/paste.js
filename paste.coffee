@@ -99,7 +99,7 @@ class Paste
       if ev.originalEvent?.clipboardData?
         clipboardData = ev.originalEvent.clipboardData
         if clipboardData.items 
-          # Chrome & Safari(text-only)
+          # Chrome 
           for item in clipboardData.items
             if item.type.match /^image\//
               reader = new FileReader()
@@ -110,13 +110,12 @@ class Paste
               item.getAsString (string)=>
                 @_target.trigger 'pasteText', text: string
         else
-          # Firefox
-          if clipboardData.types.length
+          # Firefox & Safari(text-only)
+          if -1 != Array.prototype.indexOf.call clipboardData.types, 'text/plain'
             text = clipboardData.getData 'Text'
             @_target.trigger 'pasteText', text: text
-          else
-            @_checkImagesInContainer (src)=>
-              @_handleImage src
+          @_checkImagesInContainer (src)=>
+            @_handleImage src
       # IE
       if clipboardData = window.clipboardData 
         if (text = clipboardData.getData 'Text')?.length

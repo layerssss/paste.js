@@ -200,16 +200,15 @@ https://github.com/layerssss/paste.js
                 }
               }
             } else {
-              if (clipboardData.types.length) {
+              if (-1 !== Array.prototype.indexOf.call(clipboardData.types, 'text/plain')) {
                 text = clipboardData.getData('Text');
                 _this._target.trigger('pasteText', {
                   text: text
                 });
-              } else {
-                _this._checkImagesInContainer(function(src) {
-                  return _this._handleImage(src);
-                });
               }
+              _this._checkImagesInContainer(function(src) {
+                return _this._handleImage(src);
+              });
             }
           }
           if (clipboardData = window.clipboardData) {
