@@ -27,9 +27,12 @@ $('textarea').pastableTextarea();
 $('div[contenteditable]').pastableContenteditable();
 
 $('*').on('pasteImage', function (ev, data){
-  console.log("dataURL: " + data.dataURL)
+  console.log("dataURL: " + data.dataURL);
+  console.log("width: " + data.width);
+  console.log("height: " + data.height);
+  console.log(data.blob);
 }).on('pasteText', function (ev, data){
-  console.log("text: " + data.text)
+  console.log("text: " + data.text);
 });
 ```
 
