@@ -1,10 +1,9 @@
-paste.js
-=====
+# paste.js
 
-paste.js is an interface to read data ( text / image ) from clipboard in different browsers. It also contains several hacks.
+`paste.js` это интерфейс для чтения информации (текст / изображение) из буфера обмена в различных браузерах. Он также содержит немного браузерных хаков.
 
-browser compatibility
------
+
+## Совместимость
 
 |                              | IE11 | Firefox 33 | Chrome 38 | Safari | Opera |
 |------------------------------|------|------------|-----------|--------|-------|
@@ -15,13 +14,15 @@ browser compatibility
 | pasteImage (textarea)        | ok   | ok         | ok        |        |       |
 | pasteImage (contenteditable) | ok   | ok         | ok        |        |       |
 
-usage
------
+## Использование
 
 ```js
-// jQuery needed
+// jQuery необходим
+
+// для вставки в обычный элемент, текстовое поле или редактируемый элемент
 $('.mydiv, textarea, div[contenteditable]').pastableElement();
 
+// можно использовать один обработчик
 $('*').on('pasteImage', function (ev, data){
   console.log("dataURL: " + data.dataURL);
   console.log("width: " + data.width);
@@ -32,7 +33,6 @@ $('*').on('pasteImage', function (ev, data){
 });
 ```
 
-more
------
+## Допольнительно
 
-see [this example](http://micy.in/paste.js/)
+Смотрите [этот пример](http://micy.in/paste.js/)
