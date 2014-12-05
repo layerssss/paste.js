@@ -18,13 +18,9 @@ browser compatibility
 usage
 -----
 
-```
+```js
 // jQuery needed
-$('.mydiv').pastableNonInputable();
-
-$('textarea').pastableTextarea();
-
-$('div[contenteditable]').pastableContenteditable();
+$('.mydiv, textarea, div[contenteditable]').pastableElement();
 
 $('*').on('pasteImage', function (ev, data){
   console.log("dataURL: " + data.dataURL);
