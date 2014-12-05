@@ -36,13 +36,23 @@
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
   <script type="text/javascript" src="paste.js"></script>
   <script type="text/javascript">
+
+    // generating preview of image
+    function createPreview(img) {
+      var c = document.createElement('canvas');
+      var height = 50, ratio = img.naturalHeight / img.naturalWidth;
+
+      c.width = height / ratio;
+      c.height = height;
+      ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      return c;
+    };
+
     $(function(){
-      $('.demo-noninputable').pastableNonInputable();
-      $('.demo-textarea').pastableTextarea();
-      $('.demo-contenteditable').pastableContenteditable();
+      $('.demo').pastableElement();
       $('.demo').on('pasteImage', function(ev, data){
-        var blobUrl = URL.createObjectURL(data.blob);
-        $('<div class="result">image: ' + data.width + ' x ' + data.height + '<img src="' + data.dataURL +'" ><a href="' + blobUrl + '">' + blobUrl + '</div>').insertAfter(this);
+        $('<div class="result">image: ' + data.width + ' x ' + data.height + '</div>').append(createPreview(data.image)).insertAfter(this);
       }).on('pasteText', function(ev, data){
         $('<div class="result"></div>').text('text: "' + data.text + '"').insertAfter(this);
       });

@@ -9,37 +9,15 @@ $.paste = (pasteContainer) ->
   console?.log "DEPRECATED: This method is deprecated. Please use $.fn.pastableNonInputable() instead."
   pm = Paste.mountNonInputable pasteContainer
   pm._container
-$.fn.pastableNonInputable = ->
+$.fn.$.fn.pastableElement = ->
   for el in @
-    Paste.mountNonInputable el
+    if el.tagName is 'TEXTAREA'
+      Paste.mountTextarea el;
+    else if !!el.hasAttribute 'contenteditable'
+      Paste.mountContenteditable el
+    else
+      Paste.mountNonInputable el
   @
-$.fn.pastableTextarea = ->
-  for el in @
-    Paste.mountTextarea el
-  @
-$.fn.pastableContenteditable = ->
-  for el in @
-    Paste.mountContenteditable el
-  @
-
-dataURLtoBlob = (dataURL, sliceSize=512) ->
-  return null unless m = dataURL.match /^data\:([^\;]+)\;base64\,(.+)$/
-  [m, contentType, b64Data] = m
-  byteCharacters = atob(b64Data)
-  byteArrays = []
-  offset = 0
-  while offset < byteCharacters.length
-    slice = byteCharacters.slice(offset, offset + sliceSize)
-    byteNumbers = new Array(slice.length)
-    i = 0
-    while i < slice.length
-      byteNumbers[i] = slice.charCodeAt(i)
-      i++
-    byteArray = new Uint8Array(byteNumbers)
-    byteArrays.push byteArray
-    offset += sliceSize
-  new Blob byteArrays,
-    type: contentType
 
 createHiddenEditable = ->
   $(document.createElement 'div')
@@ -102,10 +80,8 @@ class Paste
           # Chrome 
           for item in clipboardData.items
             if item.type.match /^image\//
-              reader = new FileReader()
-              reader.onload = (event)=>
-                @_handleImage event.target.result
-              reader.readAsDataURL item.getAsFile()
+              imgURL = URL.createObjectURL item.getAsFile()
+              return @_handleImage imgURL
             if item.type == 'text/plain'
               item.getAsString (string)=>
                 @_target.trigger 'pasteText', text: string
@@ -128,19 +104,8 @@ class Paste
   _handleImage: (src)->
     loader = new Image()
     loader.onload = =>
-      canvas = document.createElement 'canvas'
-      canvas.width = loader.width
-      canvas.height = loader.height
-      ctx = canvas.getContext '2d'
-      ctx.drawImage loader, 0, 0, canvas.width, canvas.height
-      dataURL = null
-      try 
-        dataURL = canvas.toDataURL 'image/png'
-        blob = dataURLtoBlob dataURL
-      if dataURL
         @_target.trigger 'pasteImage',
-          blob: blob
-          dataURL: dataURL
+          image: loader
           width: loader.width
           height: loader.height
     loader.src = src
