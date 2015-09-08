@@ -44,6 +44,8 @@ dataURLtoBlob = (dataURL, sliceSize=512) ->
 createHiddenEditable = ->
   $(document.createElement 'div')
   .attr 'contenteditable', true
+  .attr 'aria-hidden', true
+  .attr 'tabindex', -1
   .css
     width: 1
     height: 1
