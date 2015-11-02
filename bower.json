@@ -15,6 +15,7 @@
     "Makefile",
     "index.html"
   ],
+  "main": "paste.js",
   "dependencies": {
     "jquery": "*"
   }
