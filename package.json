@@ -1,0 +1,24 @@
+{
+  "name": "paste.js",
+  "version": "0.0.10",
+  "description": "read image/text data from clipboard (cross-browser)",
+  "main": "paste.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/layerssss/paste.js.git"
+  },
+  "keywords": [
+    "copy",
+    "paste",
+    "jQuery"
+  ],
+  "author": "Michael Yin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/layerssss/paste.js/issues"
+  },
+  "homepage": "https://github.com/layerssss/paste.js#readme"
+}
