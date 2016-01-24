@@ -81,6 +81,8 @@ class Paste
       paste._container.focus() if ctlDown && ev.keyCode == 86
     $(paste._target).on 'pasteImage', =>
       $(textarea).focus()
+    $(paste._target).on 'pasteImageError', =>
+      $(textarea).focus()
     $(paste._target).on 'pasteText', =>
       $(textarea).focus()
   
@@ -129,7 +131,11 @@ class Paste
             @_checkImagesInContainer ->
 
   _handleImage: (src)->
+    if src.match /^webkit\-fake\-url\:\/\//
+      return @_target.trigger 'pasteImageError',
+        message: "You are trying to paste an image in Safari, however we are unable to retieve its data."
     loader = new Image()
+    loader.crossOrigin = "anonymous"
     loader.onload = =>
       canvas = document.createElement 'canvas'
       canvas.width = loader.width
@@ -146,6 +152,10 @@ class Paste
           dataURL: dataURL
           width: loader.width
           height: loader.height
+    loader.onerror = =>
+      @_target.trigger 'pasteImageError',
+        message: "Failed to get image from: #{src}"
+        url: src
     loader.src = src
 
   _checkImagesInContainer: (cb)->

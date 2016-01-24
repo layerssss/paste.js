@@ -141,6 +141,11 @@ https://github.com/layerssss/paste.js
           return $(textarea).focus();
         };
       })(this));
+      $(paste._target).on('pasteImageError', (function(_this) {
+        return function() {
+          return $(textarea).focus();
+        };
+      })(this));
       $(paste._target).on('pasteText', (function(_this) {
         return function() {
           return $(textarea).focus();
@@ -236,7 +241,13 @@ https://github.com/layerssss/paste.js
 
     Paste.prototype._handleImage = function(src) {
       var loader;
+      if (src.match(/^webkit\-fake\-url\:\/\//)) {
+        return this._target.trigger('pasteImageError', {
+          message: "You are trying to paste an image in Safari, however we are unable to retieve its data."
+        });
+      }
       loader = new Image();
+      loader.crossOrigin = "anonymous";
       loader.onload = (function(_this) {
         return function() {
           var blob, canvas, ctx, dataURL;
@@ -258,6 +269,14 @@ https://github.com/layerssss/paste.js
               height: loader.height
             });
           }
+        };
+      })(this);
+      loader.onerror = (function(_this) {
+        return function() {
+          return _this._target.trigger('pasteImageError', {
+            message: "Failed to get image from: " + src,
+            url: src
+          });
         };
       })(this);
       return loader.src = src;
