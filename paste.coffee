@@ -82,6 +82,12 @@ class Paste
     $(textarea).on 'focus', => $(textarea).addClass 'pastable-focus'
     $(textarea).on 'blur', => $(textarea).removeClass 'pastable-focus'
     $(paste._target).on '_pasteCheckContainerDone', => $(textarea).focus()
+    $(paste._target).on 'pasteText', (ev, data)=>
+      curStart = $(textarea).prop('selectionStart')
+      curEnd = $(textarea).prop('selectionEnd')
+      content = $(textarea).val()
+      $(textarea).val "#{content[0...curStart]}#{data.text}#{content[curEnd...]}"
+      $(textarea)[0].setSelectionRange curStart + data.text.length, curStart + data.text.length
 
 
   @mountContenteditable: (contenteditable)->
