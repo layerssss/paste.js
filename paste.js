@@ -146,9 +146,20 @@ https://github.com/layerssss/paste.js
           return $(textarea).removeClass('pastable-focus');
         };
       })(this));
-      return $(paste._target).on('_pasteCheckContainerDone', (function(_this) {
+      $(paste._target).on('_pasteCheckContainerDone', (function(_this) {
         return function() {
           return $(textarea).focus();
+        };
+      })(this));
+      return $(paste._target).on('pasteText', (function(_this) {
+        return function(ev, data) {
+          var content, curEnd, curStart;
+          curStart = $(textarea).prop('selectionStart');
+          curEnd = $(textarea).prop('selectionEnd');
+          content = $(textarea).val();
+          $(textarea).val("" + content.slice(0, curStart) + data.text + content.slice(curEnd));
+          $(textarea)[0].setSelectionRange(curStart + data.text.length, curStart + data.text.length);
+          return $(textarea).trigger('change');
         };
       })(this));
     };
