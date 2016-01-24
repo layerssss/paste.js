@@ -77,6 +77,7 @@ class Paste
       ctlDown = false if ev.keyCode in [17, 224]
     $(textarea).on 'keydown', (ev)-> 
       ctlDown = true if ev.keyCode in [17, 224]
+      ctlDown = ev.ctrlKey || ev.metaKey if ev.ctrlKey? && ev.metaKey?
       paste._container.focus() if ctlDown && ev.keyCode == 86
     $(paste._target).on 'pasteImage', =>
       $(textarea).focus()
