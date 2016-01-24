@@ -31,6 +31,11 @@ $('*').on('pasteImage', function (ev, data){
   console.log("width: " + data.width);
   console.log("height: " + data.height);
   console.log(data.blob);
+}).on('pasteImageError', function(ev, data){
+  alert('Oops: ' + data.message);
+  if(data.url){
+    alert('But we got its url anyway:' + data.url)
+  }
 }).on('pasteText', function (ev, data){
   console.log("text: " + data.text);
 });
