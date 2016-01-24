@@ -136,29 +136,19 @@ https://github.com/layerssss/paste.js
           return paste._container.focus();
         }
       });
-      $(paste._target).on('pasteImage', (function(_this) {
-        return function() {
-          return $(textarea).focus();
-        };
-      })(this));
-      $(paste._target).on('pasteImageError', (function(_this) {
-        return function() {
-          return $(textarea).focus();
-        };
-      })(this));
-      $(paste._target).on('pasteText', (function(_this) {
-        return function() {
-          return $(textarea).focus();
-        };
-      })(this));
       $(textarea).on('focus', (function(_this) {
         return function() {
           return $(textarea).addClass('pastable-focus');
         };
       })(this));
-      return $(textarea).on('blur', (function(_this) {
+      $(textarea).on('blur', (function(_this) {
         return function() {
           return $(textarea).removeClass('pastable-focus');
+        };
+      })(this));
+      return $(paste._target).on('_pasteCheckContainerDone', (function(_this) {
+        return function() {
+          return $(textarea).focus();
         };
       })(this));
     };
@@ -185,7 +175,7 @@ https://github.com/layerssss/paste.js
       this._target = $(this._target).addClass('pastable');
       this._container.on('paste', (function(_this) {
         return function(ev) {
-          var clipboardData, file, item, j, k, len, len1, reader, ref, ref1, ref2, ref3, results, text;
+          var clipboardData, file, item, j, k, len, len1, reader, ref, ref1, ref2, ref3, text;
           if (((ref = ev.originalEvent) != null ? ref.clipboardData : void 0) != null) {
             clipboardData = ev.originalEvent.clipboardData;
             if (clipboardData.items) {
@@ -221,20 +211,22 @@ https://github.com/layerssss/paste.js
           }
           if (clipboardData = window.clipboardData) {
             if ((ref2 = (text = clipboardData.getData('Text'))) != null ? ref2.length : void 0) {
-              return _this._target.trigger('pasteText', {
-                text: text
-              });
+              setTimeout(function() {
+                _this._target.trigger('pasteText', {
+                  text: text
+                });
+                return _this._target.trigger('_pasteCheckContainerDone');
+              }, 1);
             } else {
               ref3 = clipboardData.files;
-              results = [];
               for (k = 0, len1 = ref3.length; k < len1; k++) {
                 file = ref3[k];
                 _this._handleImage(URL.createObjectURL(file));
-                results.push(_this._checkImagesInContainer(function() {}));
               }
-              return results;
+              _this._checkImagesInContainer(function(src) {});
             }
           }
+          return null;
         };
       })(this));
     }
@@ -292,17 +284,16 @@ https://github.com/layerssss/paste.js
       }
       return setTimeout((function(_this) {
         return function() {
-          var k, len1, ref1, results;
+          var k, len1, ref1;
           ref1 = _this._container.find('img');
-          results = [];
           for (k = 0, len1 = ref1.length; k < len1; k++) {
             img = ref1[k];
             if (!img["_paste_marked_" + timespan]) {
               cb(img.src);
             }
-            results.push($(img).remove());
+            $(img).remove();
           }
-          return results;
+          return _this._target.trigger('_pasteCheckContainerDone');
         };
       })(this), 1);
     };

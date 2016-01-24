@@ -79,15 +79,10 @@ class Paste
       ctlDown = true if ev.keyCode in [17, 224]
       ctlDown = ev.ctrlKey || ev.metaKey if ev.ctrlKey? && ev.metaKey?
       paste._container.focus() if ctlDown && ev.keyCode == 86
-    $(paste._target).on 'pasteImage', =>
-      $(textarea).focus()
-    $(paste._target).on 'pasteImageError', =>
-      $(textarea).focus()
-    $(paste._target).on 'pasteText', =>
-      $(textarea).focus()
-  
     $(textarea).on 'focus', => $(textarea).addClass 'pastable-focus'
     $(textarea).on 'blur', => $(textarea).removeClass 'pastable-focus'
+    $(paste._target).on '_pasteCheckContainerDone', => $(textarea).focus()
+
 
   @mountContenteditable: (contenteditable)->
     paste = new Paste contenteditable, contenteditable
@@ -124,11 +119,15 @@ class Paste
       # IE
       if clipboardData = window.clipboardData 
         if (text = clipboardData.getData 'Text')?.length
-          @_target.trigger 'pasteText', text: text
+          setTimeout =>
+            @_target.trigger 'pasteText', text: text
+            @_target.trigger '_pasteCheckContainerDone'
+          , 1
         else
           for file in clipboardData.files
             @_handleImage URL.createObjectURL(file)
-            @_checkImagesInContainer ->
+          @_checkImagesInContainer (src)->
+      null
 
   _handleImage: (src)->
     if src.match /^webkit\-fake\-url\:\/\//
@@ -165,4 +164,5 @@ class Paste
       for img in @_container.find('img')
         cb img.src unless img["_paste_marked_#{timespan}"]
         $(img).remove()
+      @_target.trigger '_pasteCheckContainerDone'
     , 1
