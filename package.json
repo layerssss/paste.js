@@ -16,7 +16,7 @@
     "jQuery"
   ],
   "author": "Michael Yin",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/layerssss/paste.js/issues"
   },

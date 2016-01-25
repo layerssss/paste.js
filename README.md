@@ -45,3 +45,8 @@ more
 -----
 
 see [this example](http://micy.in/paste.js/)
+
+license
+-----
+
+[The MIT License (MIT)](LICENSE)
