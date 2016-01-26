@@ -133,7 +133,15 @@ https://github.com/layerssss/paste.js
           ctlDown = ev.ctrlKey || ev.metaKey;
         }
         if (ctlDown && ev.keyCode === 86) {
-          return paste._container.focus();
+          paste._container.focus();
+          paste._paste_event_fired = false;
+          return setTimeout((function(_this) {
+            return function() {
+              if (!paste._paste_event_fired) {
+                return $(textarea).focus();
+              }
+            };
+          })(this), 1);
         }
       });
       $(textarea).on('focus', (function(_this) {
@@ -187,6 +195,7 @@ https://github.com/layerssss/paste.js
       this._container.on('paste', (function(_this) {
         return function(ev) {
           var clipboardData, file, item, j, k, len, len1, reader, ref, ref1, ref2, ref3, text;
+          _this._paste_event_fired = true;
           if (((ref = ev.originalEvent) != null ? ref.clipboardData : void 0) != null) {
             clipboardData = ev.originalEvent.clipboardData;
             if (clipboardData.items) {

@@ -78,7 +78,12 @@ class Paste
     $(textarea).on 'keydown', (ev)-> 
       ctlDown = true if ev.keyCode in [17, 224]
       ctlDown = ev.ctrlKey || ev.metaKey if ev.ctrlKey? && ev.metaKey?
-      paste._container.focus() if ctlDown && ev.keyCode == 86
+      if ctlDown && ev.keyCode == 86
+        paste._container.focus()
+        paste._paste_event_fired = false
+        setTimeout =>
+          $(textarea).focus() unless paste._paste_event_fired
+        , 1
     $(textarea).on 'focus', => $(textarea).addClass 'pastable-focus'
     $(textarea).on 'blur', => $(textarea).removeClass 'pastable-focus'
     $(paste._target).on '_pasteCheckContainerDone', => $(textarea).focus()
@@ -103,6 +108,7 @@ class Paste
     @_target = $ @_target
     .addClass 'pastable'
     @_container.on 'paste', (ev)=>
+      @_paste_event_fired = true
       if ev.originalEvent?.clipboardData?
         clipboardData = ev.originalEvent.clipboardData
         if clipboardData.items 
