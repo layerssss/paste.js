@@ -70,7 +70,7 @@ class Paste
 
   @mountTextarea: (textarea)->
     # Firefox & IE
-    return @mountContenteditable textarea if -1 != navigator.userAgent.toLowerCase().indexOf('chrome')
+    return @mountContenteditable textarea if -1 == navigator.userAgent.toLowerCase().indexOf('firefox')
     paste = new Paste createHiddenEditable().insertBefore(textarea), textarea
     ctlDown = false
     $(textarea).on 'keyup', (ev)-> 
