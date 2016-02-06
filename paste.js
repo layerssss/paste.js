@@ -113,7 +113,7 @@ https://github.com/layerssss/paste.js
 
     Paste.mountTextarea = function(textarea) {
       var ctlDown, paste;
-      if (-1 !== navigator.userAgent.toLowerCase().indexOf('chrome')) {
+      if (!navigator.userAgent.toLowerCase().match(/firefox|trident|edge/)) {
         return this.mountContenteditable(textarea);
       }
       paste = new Paste(createHiddenEditable().insertBefore(textarea), textarea);
