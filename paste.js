@@ -121,8 +121,9 @@ https://github.com/layerssss/paste.js
       $(textarea).on('keyup', function(ev) {
         var ref;
         if ((ref = ev.keyCode) === 17 || ref === 224) {
-          return ctlDown = false;
+          ctlDown = false;
         }
+        return null;
       });
       $(textarea).on('keydown', function(ev) {
         var ref;
@@ -135,7 +136,7 @@ https://github.com/layerssss/paste.js
         if (ctlDown && ev.keyCode === 86) {
           paste._container.focus();
           paste._paste_event_fired = false;
-          return setTimeout((function(_this) {
+          setTimeout((function(_this) {
             return function() {
               if (!paste._paste_event_fired) {
                 return $(textarea).focus();
@@ -143,7 +144,11 @@ https://github.com/layerssss/paste.js
             };
           })(this), 1);
         }
+        return null;
       });
+      $(textarea).on('paste', (function(_this) {
+        return function() {};
+      })(this));
       $(textarea).on('focus', (function(_this) {
         return function() {
           return $(textarea).addClass('pastable-focus');
@@ -220,9 +225,11 @@ https://github.com/layerssss/paste.js
             } else {
               if (-1 !== Array.prototype.indexOf.call(clipboardData.types, 'text/plain')) {
                 text = clipboardData.getData('Text');
-                _this._target.trigger('pasteText', {
-                  text: text
-                });
+                setTimeout(function() {
+                  return _this._target.trigger('pasteText', {
+                    text: text
+                  });
+                }, 1);
               }
               _this._checkImagesInContainer(function(src) {
                 return _this._handleImage(src);

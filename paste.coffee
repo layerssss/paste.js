@@ -75,6 +75,7 @@ class Paste
     ctlDown = false
     $(textarea).on 'keyup', (ev)-> 
       ctlDown = false if ev.keyCode in [17, 224]
+      null
     $(textarea).on 'keydown', (ev)-> 
       ctlDown = true if ev.keyCode in [17, 224]
       ctlDown = ev.ctrlKey || ev.metaKey if ev.ctrlKey? && ev.metaKey?
@@ -84,9 +85,12 @@ class Paste
         setTimeout =>
           $(textarea).focus() unless paste._paste_event_fired
         , 1
+      null
+    $(textarea).on 'paste', =>
     $(textarea).on 'focus', => $(textarea).addClass 'pastable-focus'
     $(textarea).on 'blur', => $(textarea).removeClass 'pastable-focus'
-    $(paste._target).on '_pasteCheckContainerDone', => $(textarea).focus()
+    $(paste._target).on '_pasteCheckContainerDone', => 
+      $(textarea).focus()
     $(paste._target).on 'pasteText', (ev, data)=>
       curStart = $(textarea).prop('selectionStart')
       curEnd = $(textarea).prop('selectionEnd')
@@ -126,7 +130,9 @@ class Paste
           # Firefox & Safari(text-only)
           if -1 != Array.prototype.indexOf.call clipboardData.types, 'text/plain'
             text = clipboardData.getData 'Text'
-            @_target.trigger 'pasteText', text: text
+            setTimeout =>
+              @_target.trigger 'pasteText', text: text
+            , 1
           @_checkImagesInContainer (src)=>
             @_handleImage src
       # IE
