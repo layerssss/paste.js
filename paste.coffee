@@ -80,17 +80,23 @@ class Paste
       ctlDown = true if ev.keyCode in [17, 224]
       ctlDown = ev.ctrlKey || ev.metaKey if ev.ctrlKey? && ev.metaKey?
       if ctlDown && ev.keyCode == 86
+        paste._textarea_focus_stolen = true
         paste._container.focus()
         paste._paste_event_fired = false
         setTimeout =>
-          $(textarea).focus() unless paste._paste_event_fired
+          unless paste._paste_event_fired
+            $(textarea).focus()
+            paste._textarea_focus_stolen = false
         , 1
       null
     $(textarea).on 'paste', =>
-    $(textarea).on 'focus', => $(textarea).addClass 'pastable-focus'
-    $(textarea).on 'blur', => $(textarea).removeClass 'pastable-focus'
+    $(textarea).on 'focus', => 
+      $(textarea).addClass 'pastable-focus' unless paste._textarea_focus_stolen
+    $(textarea).on 'blur', => 
+      $(textarea).removeClass 'pastable-focus' unless paste._textarea_focus_stolen
     $(paste._target).on '_pasteCheckContainerDone', => 
       $(textarea).focus()
+      paste._textarea_focus_stolen = false
     $(paste._target).on 'pasteText', (ev, data)=>
       curStart = $(textarea).prop('selectionStart')
       curEnd = $(textarea).prop('selectionEnd')
@@ -98,7 +104,6 @@ class Paste
       $(textarea).val "#{content[0...curStart]}#{data.text}#{content[curEnd...]}"
       $(textarea)[0].setSelectionRange curStart + data.text.length, curStart + data.text.length
       $(textarea).trigger 'change'
-
 
   @mountContenteditable: (contenteditable)->
     paste = new Paste contenteditable, contenteditable

@@ -134,12 +134,14 @@ https://github.com/layerssss/paste.js
           ctlDown = ev.ctrlKey || ev.metaKey;
         }
         if (ctlDown && ev.keyCode === 86) {
+          paste._textarea_focus_stolen = true;
           paste._container.focus();
           paste._paste_event_fired = false;
           setTimeout((function(_this) {
             return function() {
               if (!paste._paste_event_fired) {
-                return $(textarea).focus();
+                $(textarea).focus();
+                return paste._textarea_focus_stolen = false;
               }
             };
           })(this), 1);
@@ -151,17 +153,22 @@ https://github.com/layerssss/paste.js
       })(this));
       $(textarea).on('focus', (function(_this) {
         return function() {
-          return $(textarea).addClass('pastable-focus');
+          if (!paste._textarea_focus_stolen) {
+            return $(textarea).addClass('pastable-focus');
+          }
         };
       })(this));
       $(textarea).on('blur', (function(_this) {
         return function() {
-          return $(textarea).removeClass('pastable-focus');
+          if (!paste._textarea_focus_stolen) {
+            return $(textarea).removeClass('pastable-focus');
+          }
         };
       })(this));
       $(paste._target).on('_pasteCheckContainerDone', (function(_this) {
         return function() {
-          return $(textarea).focus();
+          $(textarea).focus();
+          return paste._textarea_focus_stolen = false;
         };
       })(this));
       return $(paste._target).on('pasteText', (function(_this) {
