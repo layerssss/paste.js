@@ -44,7 +44,7 @@ $('*').on('pasteImage', function (ev, data){
 more
 -----
 
-see [this example](http://micy.in/paste.js/)
+see [this example](http://gh-pages.micy.in/paste.js/)
 
 license
 -----
