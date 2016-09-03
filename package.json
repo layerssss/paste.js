@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/layerssss/paste.js/issues"
   },
-  "homepage": "https://github.com/layerssss/paste.js#readme"
+  "homepage": "https://github.com/layerssss/paste.js#readme",
+  "dependencies": {
+    "browser-sync": "^2.14.3",
+    "coffee-script": "^1.10.0",
+    "concurrently": "^2.2.0",
+    "wait-run": "^1.2.0"
+  }
 }
