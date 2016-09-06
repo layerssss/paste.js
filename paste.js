@@ -326,8 +326,8 @@ https://github.com/layerssss/paste.js
             img = ref1[k];
             if (!img["_paste_marked_" + timespan]) {
               cb(img.src);
+              $(img).remove();
             }
-            $(img).remove();
           }
           return _this._target.trigger('_pasteCheckContainerDone');
         };

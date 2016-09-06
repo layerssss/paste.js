@@ -188,7 +188,8 @@ class Paste
     img["_paste_marked_#{timespan}"] = true for img in @_container.find('img')
     setTimeout =>
       for img in @_container.find('img')
-        cb img.src unless img["_paste_marked_#{timespan}"]
-        $(img).remove()
+        unless img["_paste_marked_#{timespan}"]
+          cb img.src
+          $(img).remove()
       @_target.trigger '_pasteCheckContainerDone'
     , 1
