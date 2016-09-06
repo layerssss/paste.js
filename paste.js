@@ -220,6 +220,7 @@ https://github.com/layerssss/paste.js
                     return _this._handleImage(event.target.result);
                   };
                   reader.readAsDataURL(item.getAsFile());
+                  ev.preventDefault();
                   break;
                 }
                 if (item.type === 'text/plain') {
