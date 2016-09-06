@@ -93,6 +93,7 @@ isFocusable = (element, hasTabindex) ->
     focusableIfVisible = element.href or hasTabindex
   else
     focusableIfVisible = hasTabindex
+  focusableIfVisible = focusableIfVisible or $(element).is('[contenteditable]')
   focusableIfVisible and $(element).is(':visible')
 
 class Paste

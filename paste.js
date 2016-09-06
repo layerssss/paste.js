@@ -128,6 +128,7 @@ https://github.com/layerssss/paste.js
     } else {
       focusableIfVisible = hasTabindex;
     }
+    focusableIfVisible = focusableIfVisible || $(element).is('[contenteditable]');
     return focusableIfVisible && $(element).is(':visible');
   };
 
