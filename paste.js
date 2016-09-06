@@ -24,7 +24,11 @@ https://github.com/layerssss/paste.js
     var el, j, len;
     for (j = 0, len = this.length; j < len; j++) {
       el = this[j];
+      if (el._pastable || $(el).is('textarea, input:text, [contenteditable]')) {
+        continue;
+      }
       Paste.mountNonInputable(el);
+      el._pastable = true;
     }
     return this;
   };
@@ -33,7 +37,11 @@ https://github.com/layerssss/paste.js
     var el, j, len;
     for (j = 0, len = this.length; j < len; j++) {
       el = this[j];
+      if (el._pastable || $(el).is(':not(textarea, input:text)')) {
+        continue;
+      }
       Paste.mountTextarea(el);
+      el._pastable = true;
     }
     return this;
   };
@@ -42,7 +50,11 @@ https://github.com/layerssss/paste.js
     var el, j, len;
     for (j = 0, len = this.length; j < len; j++) {
       el = this[j];
+      if (el._pastable || $(el).is(':not([contenteditable])')) {
+        continue;
+      }
       Paste.mountContenteditable(el);
+      el._pastable = true;
     }
     return this;
   };

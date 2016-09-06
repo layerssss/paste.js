@@ -11,15 +11,21 @@ $.paste = (pasteContainer) ->
   pm._container
 $.fn.pastableNonInputable = ->
   for el in @
+    continue if el._pastable || $(el).is('textarea, input:text, [contenteditable]')
     Paste.mountNonInputable el
+    el._pastable = true
   @
 $.fn.pastableTextarea = ->
   for el in @
+    continue if el._pastable || $(el).is(':not(textarea, input:text)')
     Paste.mountTextarea el
+    el._pastable = true
   @
 $.fn.pastableContenteditable = ->
   for el in @
+    continue if el._pastable || $(el).is(':not([contenteditable])')
     Paste.mountContenteditable el
+    el._pastable = true
   @
 
 dataURLtoBlob = (dataURL, sliceSize=512) ->
