@@ -1,4 +1,4 @@
-### 
+###
 paste.js is an interface to read data ( text / image ) from clipboard in different browsers. It also contains several hacks.
 
 https://github.com/layerssss/paste.js
@@ -43,7 +43,7 @@ dataURLtoBlob = (dataURL, sliceSize=512) ->
 
 createHiddenEditable = ->
   $(document.createElement 'div')
-  .attr 'contenteditable', true
+    .attr 'contenteditable', true
   .attr 'aria-hidden', true
   .attr 'tabindex', -1
   .css
@@ -70,13 +70,13 @@ class Paste
 
   @mountTextarea: (textarea)->
     # Firefox & IE
-    return @mountContenteditable textarea unless navigator.userAgent.toLowerCase().match /firefox|trident|edge/
+    return @mountContenteditable textarea if DataTransfer.prototype.__lookupGetter__('items')
     paste = new Paste createHiddenEditable().insertBefore(textarea), textarea
     ctlDown = false
-    $(textarea).on 'keyup', (ev)-> 
+    $(textarea).on 'keyup', (ev)->
       ctlDown = false if ev.keyCode in [17, 224]
       null
-    $(textarea).on 'keydown', (ev)-> 
+    $(textarea).on 'keydown', (ev)->
       ctlDown = true if ev.keyCode in [17, 224]
       ctlDown = ev.ctrlKey || ev.metaKey if ev.ctrlKey? && ev.metaKey?
       if ctlDown && ev.keyCode == 86
@@ -90,11 +90,11 @@ class Paste
         , 1
       null
     $(textarea).on 'paste', =>
-    $(textarea).on 'focus', => 
+    $(textarea).on 'focus', =>
       $(textarea).addClass 'pastable-focus' unless paste._textarea_focus_stolen
-    $(textarea).on 'blur', => 
+    $(textarea).on 'blur', =>
       $(textarea).removeClass 'pastable-focus' unless paste._textarea_focus_stolen
-    $(paste._target).on '_pasteCheckContainerDone', => 
+    $(paste._target).on '_pasteCheckContainerDone', =>
       $(textarea).focus()
       paste._textarea_focus_stolen = false
     $(paste._target).on 'pasteText', (ev, data)=>
@@ -107,7 +107,7 @@ class Paste
 
   @mountContenteditable: (contenteditable)->
     paste = new Paste contenteditable, contenteditable
-    
+
     $(contenteditable).on 'focus', => $(contenteditable).addClass 'pastable-focus'
     $(contenteditable).on 'blur', => $(contenteditable).removeClass 'pastable-focus'
 
@@ -115,13 +115,13 @@ class Paste
   constructor: (@_container, @_target)->
     @_container = $ @_container
     @_target = $ @_target
-    .addClass 'pastable'
+      .addClass 'pastable'
     @_container.on 'paste', (ev)=>
       @_paste_event_fired = true
       if ev.originalEvent?.clipboardData?
         clipboardData = ev.originalEvent.clipboardData
-        if clipboardData.items 
-          # Chrome 
+        if clipboardData.items
+          # Chrome or any other browsers with DataTransfer.items implemented
           for item in clipboardData.items
             if item.type.match /^image\//
               reader = new FileReader()
@@ -141,7 +141,7 @@ class Paste
           @_checkImagesInContainer (src)=>
             @_handleImage src
       # IE
-      if clipboardData = window.clipboardData 
+      if clipboardData = window.clipboardData
         if (text = clipboardData.getData 'Text')?.length
           setTimeout =>
             @_target.trigger 'pasteText', text: text
@@ -166,7 +166,7 @@ class Paste
       ctx = canvas.getContext '2d'
       ctx.drawImage loader, 0, 0, canvas.width, canvas.height
       dataURL = null
-      try 
+      try
         dataURL = canvas.toDataURL 'image/png'
         blob = dataURLtoBlob dataURL
       if dataURL
