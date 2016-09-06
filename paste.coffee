@@ -154,6 +154,7 @@ class Paste
     @_target = $ @_target
       .addClass 'pastable'
     @_container.on 'paste', (ev)=>
+      return ev.preventDefault() unless ev.currentTarget == ev.target
       @_paste_event_fired = true
       if ev.originalEvent?.clipboardData?
         clipboardData = ev.originalEvent.clipboardData
