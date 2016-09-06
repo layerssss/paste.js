@@ -7,7 +7,7 @@ https://github.com/layerssss/paste.js
  */
 
 (function() {
-  var $, Paste, createHiddenEditable, dataURLtoBlob;
+  var $, Paste, createHiddenEditable, dataURLtoBlob, isFocusable;
 
   $ = window.jQuery;
 
@@ -86,6 +86,39 @@ https://github.com/layerssss/paste.js
     });
   };
 
+  isFocusable = function(element, hasTabindex) {
+    var fieldset, focusableIfVisible, img, map, mapName, nodeName;
+    map = void 0;
+    mapName = void 0;
+    img = void 0;
+    focusableIfVisible = void 0;
+    fieldset = void 0;
+    nodeName = element.nodeName.toLowerCase();
+    if ('area' === nodeName) {
+      map = element.parentNode;
+      mapName = map.name;
+      if (!element.href || !mapName || map.nodeName.toLowerCase() !== 'map') {
+        return false;
+      }
+      img = $('img[usemap=\'#' + mapName + '\']');
+      return img.length > 0 && img.is(':visible');
+    }
+    if (/^(input|select|textarea|button|object)$/.test(nodeName)) {
+      focusableIfVisible = !element.disabled;
+      if (focusableIfVisible) {
+        fieldset = $(element).closest('fieldset')[0];
+        if (fieldset) {
+          focusableIfVisible = !fieldset.disabled;
+        }
+      }
+    } else if ('a' === nodeName) {
+      focusableIfVisible = element.href || hasTabindex;
+    } else {
+      focusableIfVisible = hasTabindex;
+    }
+    return focusableIfVisible && $(element).is(':visible');
+  };
+
   Paste = (function() {
     Paste.prototype._target = null;
 
@@ -95,8 +128,10 @@ https://github.com/layerssss/paste.js
       var paste;
       paste = new Paste(createHiddenEditable().appendTo(nonInputable), nonInputable);
       $(nonInputable).on('click', (function(_this) {
-        return function() {
-          return paste._container.focus();
+        return function(ev) {
+          if (!isFocusable(ev.target, false)) {
+            return paste._container.focus();
+          }
         };
       })(this));
       paste._container.on('focus', (function(_this) {

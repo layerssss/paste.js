@@ -53,6 +53,42 @@ createHiddenEditable = ->
     left: -100
     overflow: 'hidden'
 
+isFocusable = (element, hasTabindex) ->
+  # https://github.com/jquery/jquery-ui/blob/master/ui/focusable.js 
+  # 
+  # * Copyright jQuery Foundation and other contributors
+  # * Released under the MIT license.
+  # * http://jquery.org/license
+  # 
+  map = undefined
+  mapName = undefined
+  img = undefined
+  focusableIfVisible = undefined
+  fieldset = undefined
+  nodeName = element.nodeName.toLowerCase()
+  if 'area' == nodeName
+    map = element.parentNode
+    mapName = map.name
+    if !element.href or !mapName or map.nodeName.toLowerCase() != 'map'
+      return false
+    img = $('img[usemap=\'#' + mapName + '\']')
+    return img.length > 0 and img.is(':visible')
+  if /^(input|select|textarea|button|object)$/.test(nodeName)
+    focusableIfVisible = !element.disabled
+    if focusableIfVisible
+      # Form controls within a disabled fieldset are disabled.
+      # However, controls within the fieldset's legend do not get disabled.
+      # Since controls generally aren't placed inside legends, we skip
+      # this portion of the check.
+      fieldset = $(element).closest('fieldset')[0]
+      if fieldset
+        focusableIfVisible = !fieldset.disabled
+  else if 'a' == nodeName
+    focusableIfVisible = element.href or hasTabindex
+  else
+    focusableIfVisible = hasTabindex
+  focusableIfVisible and $(element).is(':visible')
+
 class Paste
   # Element to receive final events.
   _target: null
@@ -62,7 +98,8 @@ class Paste
 
   @mountNonInputable: (nonInputable)->
     paste = new Paste createHiddenEditable().appendTo(nonInputable), nonInputable
-    $(nonInputable).on 'click', => paste._container.focus()
+    $(nonInputable).on 'click', (ev)=>
+      paste._container.focus() unless isFocusable ev.target, false
 
     paste._container.on 'focus', => $(nonInputable).addClass 'pastable-focus'
     paste._container.on 'blur', => $(nonInputable).removeClass 'pastable-focus'
