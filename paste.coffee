@@ -128,6 +128,7 @@ class Paste
               reader.onload = (event)=>
                 @_handleImage event.target.result
               reader.readAsDataURL item.getAsFile()
+              break
             if item.type == 'text/plain'
               item.getAsString (string)=>
                 @_target.trigger 'pasteText', text: string
