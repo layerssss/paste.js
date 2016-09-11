@@ -161,7 +161,7 @@ https://github.com/layerssss/paste.js
 
     Paste.mountTextarea = function(textarea) {
       var ctlDown, paste;
-      if (DataTransfer.prototype.__lookupGetter__('items')) {
+      if (typeof DataTransfer !== "undefined" && DataTransfer !== null ? DataTransfer.prototype.__lookupGetter__('items') : void 0) {
         return this.mountContenteditable(textarea);
       }
       paste = new Paste(createHiddenEditable().insertBefore(textarea), textarea);
