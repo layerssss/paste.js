@@ -160,22 +160,22 @@ https://github.com/layerssss/paste.js
     };
 
     Paste.mountTextarea = function(textarea) {
-      var ctlDown, paste;
-      if (typeof DataTransfer !== "undefined" && DataTransfer !== null ? DataTransfer.prototype.__lookupGetter__('items') : void 0) {
+      var ctlDown, paste, ref, ref1;
+      if ((typeof DataTransfer !== "undefined" && DataTransfer !== null ? DataTransfer.prototype : void 0) && ((ref = Object.getOwnPropertyDescriptor) != null ? (ref1 = ref.call(Object, DataTransfer.prototype, 'items')) != null ? ref1.get : void 0 : void 0)) {
         return this.mountContenteditable(textarea);
       }
       paste = new Paste(createHiddenEditable().insertBefore(textarea), textarea);
       ctlDown = false;
       $(textarea).on('keyup', function(ev) {
-        var ref;
-        if ((ref = ev.keyCode) === 17 || ref === 224) {
+        var ref2;
+        if ((ref2 = ev.keyCode) === 17 || ref2 === 224) {
           ctlDown = false;
         }
         return null;
       });
       $(textarea).on('keydown', function(ev) {
-        var ref;
-        if ((ref = ev.keyCode) === 17 || ref === 224) {
+        var ref2;
+        if ((ref2 = ev.keyCode) === 17 || ref2 === 224) {
           ctlDown = true;
         }
         if ((ev.ctrlKey != null) && (ev.metaKey != null)) {

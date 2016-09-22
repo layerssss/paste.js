@@ -114,7 +114,7 @@ class Paste
 
   @mountTextarea: (textarea)->
     # Firefox & IE
-    return @mountContenteditable textarea if DataTransfer?.prototype.__lookupGetter__('items')
+    return @mountContenteditable textarea if DataTransfer?.prototype && Object.getOwnPropertyDescriptor?.call(Object, DataTransfer.prototype, 'items')?.get
     paste = new Paste createHiddenEditable().insertBefore(textarea), textarea
     ctlDown = false
     $(textarea).on 'keyup', (ev)->
