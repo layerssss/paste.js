@@ -1,6 +1,6 @@
 {
   "name": "paste.js",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "read image/text data from clipboard (cross-browser)",
   "main": "paste.js",
   "scripts": {
