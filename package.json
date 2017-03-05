@@ -4,6 +4,7 @@
   "description": "read image/text data from clipboard (cross-browser)",
   "main": "paste.js",
   "scripts": {
+    "start": "make watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
