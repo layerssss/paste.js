@@ -172,7 +172,8 @@ class Paste
               reader = new FileReader()
               reader.onload = (event)=>
                 @_handleImage event.target.result
-              reader.readAsDataURL item.getAsFile()
+              try
+                reader.readAsDataURL item.getAsFile()
               ev.preventDefault()
               break
             if item.type == 'text/plain'
