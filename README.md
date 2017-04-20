@@ -6,14 +6,14 @@ paste.js is an interface to read data ( text / image ) from clipboard in differe
 browser compatibility
 -----
 
-|                              | IE11 | Firefox 33 | Chrome 38 | Safari | Opera |
-|------------------------------|------|------------|-----------|--------|-------|
-| pasteText (non-inputable)    | ok   | ok         | ok        | ok     | ok    |
-| pasteText (textarea)         | ok   | ok         | ok        | ok     | ok    |
-| pasteText (contenteditable)  | ok   | ok         | ok        | ok     | ok    |
-| pasteImage (non-inputable)   | ok   | ok         | ok        |        |       |
-| pasteImage (textarea)        | ok   | ok         | ok        |        |       |
-| pasteImage (contenteditable) | ok   | ok         | ok        |        |       |
+|                              | IE11 | Firefox 33 | Chrome 38 | Safari(10.1) | Opera |
+|------------------------------|------|------------|-----------|--------------|-------|
+| pasteText (non-inputable)    | ok   | ok         | ok        | ok           | ok    |
+| pasteText (textarea)         | ok   | ok         | ok        | ok           | ok    |
+| pasteText (contenteditable)  | ok   | ok         | ok        | ok           | ok    |
+| pasteImage (non-inputable)   | ok   | ok         | ok        | ok           |       |
+| pasteImage (textarea)        | ok   | ok         | ok        | ok           |       |
+| pasteImage (contenteditable) | ok   | ok         | ok        | ok           |       |
 
 usage
 -----
