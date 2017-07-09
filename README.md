@@ -11,9 +11,9 @@ browser compatibility
 | pasteText (non-inputable)    | ok   | ok         | ok        | ok           | ok    |
 | pasteText (textarea)         | ok   | ok         | ok        | ok           | ok    |
 | pasteText (contenteditable)  | ok   | ok         | ok        | ok           | ok    |
-| pasteImage (non-inputable)   | ok   | ok         | ok        | ok           |       |
-| pasteImage (textarea)        | ok   | ok         | ok        | ok           |       |
-| pasteImage (contenteditable) | ok   | ok         | ok        | ok           |       |
+| pasteImage (non-inputable)   | ok   | ok         | ok        | ok           | ok    |
+| pasteImage (textarea)        | ok   | ok         | ok        | ok           | ok    |
+| pasteImage (contenteditable) | ok   | ok         | ok        | ok           | ok    |
 
 usage
 -----
