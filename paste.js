@@ -330,6 +330,7 @@ https://github.com/layerssss/paste.js
           message: "You are trying to paste an image in Safari, however we are unable to retieve its data."
         });
       }
+      this._target.trigger('pasteImageStart');
       loader = new Image();
       loader.crossOrigin = "anonymous";
       loader.onload = (function(_this) {
@@ -346,21 +347,23 @@ https://github.com/layerssss/paste.js
             blob = dataURLtoBlob(dataURL);
           } catch (error) {}
           if (dataURL) {
-            return _this._target.trigger('pasteImage', {
+            _this._target.trigger('pasteImage', {
               blob: blob,
               dataURL: dataURL,
               width: loader.width,
               height: loader.height
             });
           }
+          return _this._target.trigger('pasteImageEnd');
         };
       })(this);
       loader.onerror = (function(_this) {
         return function() {
-          return _this._target.trigger('pasteImageError', {
+          _this._target.trigger('pasteImageError', {
             message: "Failed to get image from: " + src,
             url: src
           });
+        return _this._target.trigger('pasteImageEnd');
         };
       })(this);
       return loader.src = src;

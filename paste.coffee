@@ -205,6 +205,7 @@ class Paste
     if src.match /^webkit\-fake\-url\:\/\//
       return @_target.trigger 'pasteImageError',
         message: "You are trying to paste an image in Safari, however we are unable to retieve its data."
+    @_target.trigger 'pasteImageStart'
     loader = new Image()
     loader.crossOrigin = "anonymous"
     loader.onload = =>
@@ -223,10 +224,12 @@ class Paste
           dataURL: dataURL
           width: loader.width
           height: loader.height
+      @_target.trigger 'pasteImageEnd'
     loader.onerror = =>
       @_target.trigger 'pasteImageError',
         message: "Failed to get image from: #{src}"
         url: src
+      @_target.trigger 'pasteImageEnd'
     loader.src = src
 
   _checkImagesInContainer: (cb)->
