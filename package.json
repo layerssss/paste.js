@@ -26,7 +26,7 @@
     "browser-sync": "^2.14.3",
     "coffee-script": "^1.10.0",
     "concurrently": "^2.2.0",
-    "wait-run": "^1.2.0"
+    "watch-run": "^1.2.5"
   },
   "files": [
     "paste.js",
