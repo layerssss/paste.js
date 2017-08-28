@@ -24,7 +24,7 @@
   "homepage": "https://github.com/layerssss/paste.js#readme",
   "devDependencies": {
     "browser-sync": "^2.14.3",
-    "coffee-script": "^1.10.0",
+    "coffee-script": "1.12.7",
     "concurrently": "^2.2.0",
     "watch-run": "^1.2.5"
   },
