@@ -46,6 +46,10 @@ more
 
 see [this example](http://layerssss.github.io/paste.js/)
 
+Thanks BrowserStack for providing cross-browser testing environment for this project.
+
+[![browserstack_logo](browserstack_logo.png)](https://browserstack.com/)
+
 license
 -----
 
