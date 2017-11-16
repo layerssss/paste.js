@@ -293,7 +293,12 @@ https://github.com/layerssss/paste.js
                   }
                   item.getAsString(function(string) {
                     if (stringIsFilename) {
-                      return pastedFilename = string;
+                      pastedFilename = string;
+                      return _this._target.trigger('pasteText', {
+                        text: string,
+                        isFilename: true,
+                        originalEvent: _this.originalEvent
+                      });
                     } else {
                       return _this._target.trigger('pasteText', {
                         text: string,

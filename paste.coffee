@@ -187,6 +187,7 @@ class Paste
               item.getAsString (string)=>
                 if stringIsFilename
                   pastedFilename = string
+                  @_target.trigger 'pasteText', text: string, isFilename: true, originalEvent: @originalEvent
                 else
                   @_target.trigger 'pasteText', text: string, originalEvent: @originalEvent
             if item.type == 'text/rtf'
