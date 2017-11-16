@@ -162,6 +162,7 @@ class Paste
       .addClass 'pastable'
     @_container.on 'paste', (ev)=>
       return ev.preventDefault() unless ev.currentTarget == ev.target
+      @originalEvent = (if ev.originalEvent != null then ev.originalEvent else null)
       @_paste_event_fired = true
       if ev.originalEvent?.clipboardData?
         clipboardData = ev.originalEvent.clipboardData
@@ -171,33 +172,33 @@ class Paste
             if item.type.match /^image\//
               reader = new FileReader()
               reader.onload = (event)=>
-                @_handleImage event.target.result, (if ev.originalEvent != null then ev.originalEvent else null)
+                @_handleImage event.target.result, @originalEvent
               try
                 reader.readAsDataURL item.getAsFile()
               ev.preventDefault()
               break
             if item.type == 'text/plain'
               item.getAsString (string)=>
-                @_target.trigger 'pasteText', text: string, originalEvent: (if ev.originalEvent != null then ev.originalEvent else null)
+                @_target.trigger 'pasteText', text: string, originalEvent: @originalEvent
         else
           # Firefox & Safari(text-only)
           if -1 != Array.prototype.indexOf.call clipboardData.types, 'text/plain'
             text = clipboardData.getData 'Text'
             setTimeout =>
-              @_target.trigger 'pasteText', text: text, originalEvent: (if ev.originalEvent != null then ev.originalEvent else null)
+              @_target.trigger 'pasteText', text: text, originalEvent: @originalEvent
             , 1
           @_checkImagesInContainer (src)=>
-            @_handleImage src, (if ev.originalEvent != null then ev.originalEvent else null)
+            @_handleImage src, @originalEvent
       # IE
       if clipboardData = window.clipboardData
         if (text = clipboardData.getData 'Text')?.length
           setTimeout =>
-            @_target.trigger 'pasteText', text: text, originalEvent: (if ev.originalEvent != null then ev.originalEvent else null)
+            @_target.trigger 'pasteText', text: text, originalEvent: @originalEvent
             @_target.trigger '_pasteCheckContainerDone'
           , 1
         else
           for file in clipboardData.files
-            @_handleImage URL.createObjectURL(file), (if ev.originalEvent != null then ev.originalEvent else null)
+            @_handleImage URL.createObjectURL(file), @originalEvent
           @_checkImagesInContainer (src)->
       null
 
