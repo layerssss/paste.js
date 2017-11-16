@@ -271,7 +271,7 @@ https://github.com/layerssss/paste.js
                 if (item.type.match(/^image\//)) {
                   reader = new FileReader();
                   reader.onload = function(event) {
-                    return _this._handleImage(event.target.result);
+                    return _this._handleImage(event.target.result, (ev.originalEvent !== null ? ev.originalEvent : null));
                   };
                   try {
                     reader.readAsDataURL(item.getAsFile());
@@ -282,7 +282,8 @@ https://github.com/layerssss/paste.js
                 if (item.type === 'text/plain') {
                   item.getAsString(function(string) {
                     return _this._target.trigger('pasteText', {
-                      text: string
+                      text: string,
+                      originalEvent: (ev.originalEvent !== null ? ev.originalEvent : null)
                     });
                   });
                 }
@@ -292,12 +293,13 @@ https://github.com/layerssss/paste.js
                 text = clipboardData.getData('Text');
                 setTimeout(function() {
                   return _this._target.trigger('pasteText', {
-                    text: text
+                    text: text,
+                    originalEvent: (ev.originalEvent !== null ? ev.originalEvent : null)
                   });
                 }, 1);
               }
               _this._checkImagesInContainer(function(src) {
-                return _this._handleImage(src);
+                return _this._handleImage(src, (ev.originalEvent !== null ? ev.originalEvent : null));
               });
             }
           }
@@ -305,7 +307,8 @@ https://github.com/layerssss/paste.js
             if ((ref2 = (text = clipboardData.getData('Text'))) != null ? ref2.length : void 0) {
               setTimeout(function() {
                 _this._target.trigger('pasteText', {
-                  text: text
+                  text: text,
+                  originalEvent: (ev.originalEvent !== null ? ev.originalEvent : null)
                 });
                 return _this._target.trigger('_pasteCheckContainerDone');
               }, 1);
@@ -313,7 +316,7 @@ https://github.com/layerssss/paste.js
               ref3 = clipboardData.files;
               for (k = 0, len1 = ref3.length; k < len1; k++) {
                 file = ref3[k];
-                _this._handleImage(URL.createObjectURL(file));
+                _this._handleImage(URL.createObjectURL(file), (ev.originalEvent !== null ? ev.originalEvent : null));
               }
               _this._checkImagesInContainer(function(src) {});
             }
@@ -323,7 +326,7 @@ https://github.com/layerssss/paste.js
       })(this));
     }
 
-    Paste.prototype._handleImage = function(src) {
+    Paste.prototype._handleImage = function(src, e) {
       var loader;
       if (src.match(/^webkit\-fake\-url\:\/\//)) {
         return this._target.trigger('pasteImageError', {
@@ -351,7 +354,8 @@ https://github.com/layerssss/paste.js
               blob: blob,
               dataURL: dataURL,
               width: loader.width,
-              height: loader.height
+              height: loader.height,
+              originalEvent: e
             });
           }
           return _this._target.trigger('pasteImageEnd');

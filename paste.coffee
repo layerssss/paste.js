@@ -171,37 +171,37 @@ class Paste
             if item.type.match /^image\//
               reader = new FileReader()
               reader.onload = (event)=>
-                @_handleImage event.target.result
+                @_handleImage event.target.result, (if ev.originalEvent != null then ev.originalEvent else null)
               try
                 reader.readAsDataURL item.getAsFile()
               ev.preventDefault()
               break
             if item.type == 'text/plain'
               item.getAsString (string)=>
-                @_target.trigger 'pasteText', text: string
+                @_target.trigger 'pasteText', text: string, originalEvent: (if ev.originalEvent != null then ev.originalEvent else null)
         else
           # Firefox & Safari(text-only)
           if -1 != Array.prototype.indexOf.call clipboardData.types, 'text/plain'
             text = clipboardData.getData 'Text'
             setTimeout =>
-              @_target.trigger 'pasteText', text: text
+              @_target.trigger 'pasteText', text: text, originalEvent: (if ev.originalEvent != null then ev.originalEvent else null)
             , 1
           @_checkImagesInContainer (src)=>
-            @_handleImage src
+            @_handleImage src, (if ev.originalEvent != null then ev.originalEvent else null)
       # IE
       if clipboardData = window.clipboardData
         if (text = clipboardData.getData 'Text')?.length
           setTimeout =>
-            @_target.trigger 'pasteText', text: text
+            @_target.trigger 'pasteText', text: text, originalEvent: (if ev.originalEvent != null then ev.originalEvent else null)
             @_target.trigger '_pasteCheckContainerDone'
           , 1
         else
           for file in clipboardData.files
-            @_handleImage URL.createObjectURL(file)
+            @_handleImage URL.createObjectURL(file), (if ev.originalEvent != null then ev.originalEvent else null)
           @_checkImagesInContainer (src)->
       null
 
-  _handleImage: (src)->
+  _handleImage: (src, e)->
     if src.match /^webkit\-fake\-url\:\/\//
       return @_target.trigger 'pasteImageError',
         message: "You are trying to paste an image in Safari, however we are unable to retieve its data."
@@ -223,7 +223,8 @@ class Paste
           blob: blob
           dataURL: dataURL
           width: loader.width
-          height: loader.height
+          height: loader.height,
+          originalEvent: e
       @_target.trigger 'pasteImageEnd'
     loader.onerror = =>
       @_target.trigger 'pasteImageError',
