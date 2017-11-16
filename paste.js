@@ -257,7 +257,7 @@ https://github.com/layerssss/paste.js
       this._target = $(this._target).addClass('pastable');
       this._container.on('paste', (function(_this) {
         return function(ev) {
-          var _i, clipboardData, file, item, j, k, len, len1, pastedFilename, reader, ref, ref1, ref2, ref3, stringIsFilename, text;
+          var _i, clipboardData, file, item, j, k, l, len, len1, len2, pastedFilename, reader, ref, ref1, ref2, ref3, ref4, stringIsFilename, text;
           if (ev.currentTarget !== ev.target) {
             return ev.preventDefault();
           }
@@ -267,9 +267,15 @@ https://github.com/layerssss/paste.js
             clipboardData = ev.originalEvent.clipboardData;
             if (clipboardData.items) {
               pastedFilename = null;
+              _this.originalEvent.pastedTypes = [];
               ref1 = clipboardData.items;
-              for (_i = j = 0, len = ref1.length; j < len; _i = ++j) {
-                item = ref1[_i];
+              for (j = 0, len = ref1.length; j < len; j++) {
+                item = ref1[j];
+                _this.originalEvent.pastedTypes.push(item.type);
+              }
+              ref2 = clipboardData.items;
+              for (_i = k = 0, len1 = ref2.length; k < len1; _i = ++k) {
+                item = ref2[_i];
                 if (item.type.match(/^image\//)) {
                   reader = new FileReader();
                   reader.onload = function(event) {
@@ -329,7 +335,7 @@ https://github.com/layerssss/paste.js
             }
           }
           if (clipboardData = window.clipboardData) {
-            if ((ref2 = (text = clipboardData.getData('Text'))) != null ? ref2.length : void 0) {
+            if ((ref3 = (text = clipboardData.getData('Text'))) != null ? ref3.length : void 0) {
               setTimeout(function() {
                 _this._target.trigger('pasteText', {
                   text: text,
@@ -338,9 +344,9 @@ https://github.com/layerssss/paste.js
                 return _this._target.trigger('_pasteCheckContainerDone');
               }, 1);
             } else {
-              ref3 = clipboardData.files;
-              for (k = 0, len1 = ref3.length; k < len1; k++) {
-                file = ref3[k];
+              ref4 = clipboardData.files;
+              for (l = 0, len2 = ref4.length; l < len2; l++) {
+                file = ref4[l];
                 _this._handleImage(URL.createObjectURL(file), _this.originalEvent);
               }
               _this._checkImagesInContainer(function(src) {});
