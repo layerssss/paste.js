@@ -257,7 +257,7 @@ https://github.com/layerssss/paste.js
       this._target = $(this._target).addClass('pastable');
       this._container.on('paste', (function(_this) {
         return function(ev) {
-          var _i, clipboardData, file, item, j, k, l, len, len1, len2, pastedFilename, reader, ref, ref1, ref2, ref3, ref4, stringIsFilename, text;
+          var _i, clipboardData, file, fileType, item, j, k, l, len, len1, len2, pastedFilename, reader, ref, ref1, ref2, ref3, ref4, stringIsFilename, text;
           if (ev.currentTarget !== ev.target) {
             return ev.preventDefault();
           }
@@ -288,8 +288,9 @@ https://github.com/layerssss/paste.js
                   break;
                 }
                 if (item.type === 'text/plain') {
-                  if (_i === 0 && clipboardData.items.length > 1 && clipboardData.items[_i + 1].type.match(/^image\//)) {
+                  if (_i === 0 && clipboardData.items.length > 1 && clipboardData.items[1].type.match(/^image\//)) {
                     stringIsFilename = true;
+                    fileType = clipboardData.items[1].type;
                   }
                   item.getAsString(function(string) {
                     if (stringIsFilename) {
@@ -297,6 +298,7 @@ https://github.com/layerssss/paste.js
                       return _this._target.trigger('pasteText', {
                         text: string,
                         isFilename: true,
+                        fileType: fileType,
                         originalEvent: _this.originalEvent
                       });
                     } else {

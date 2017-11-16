@@ -182,12 +182,13 @@ class Paste
               ev.preventDefault()
               break
             if item.type == 'text/plain'
-              if _i == 0 && clipboardData.items.length > 1 && clipboardData.items[_i + 1].type.match /^image\//
+              if _i == 0 && clipboardData.items.length > 1 && clipboardData.items[1].type.match /^image\//
                 stringIsFilename = true
+                fileType = clipboardData.items[1].type
               item.getAsString (string)=>
                 if stringIsFilename
                   pastedFilename = string
-                  @_target.trigger 'pasteText', text: string, isFilename: true, originalEvent: @originalEvent
+                  @_target.trigger 'pasteText', text: string, isFilename: true, fileType: fileType, originalEvent: @originalEvent
                 else
                   @_target.trigger 'pasteText', text: string, originalEvent: @originalEvent
             if item.type == 'text/rtf'
