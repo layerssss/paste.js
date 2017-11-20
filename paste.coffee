@@ -162,46 +162,64 @@ class Paste
       .addClass 'pastable'
     @_container.on 'paste', (ev)=>
       return ev.preventDefault() unless ev.currentTarget == ev.target
+      @originalEvent = (if ev.originalEvent != null then ev.originalEvent else null)
       @_paste_event_fired = true
       if ev.originalEvent?.clipboardData?
         clipboardData = ev.originalEvent.clipboardData
         if clipboardData.items
+          pastedFilename = null
           # Chrome or any other browsers with DataTransfer.items implemented
+          @originalEvent.pastedTypes = []
           for item in clipboardData.items
+            @originalEvent.pastedTypes.push(item.type)
+          for item, _i in clipboardData.items
             if item.type.match /^image\//
               reader = new FileReader()
               reader.onload = (event)=>
-                @_handleImage event.target.result
+                @_handleImage event.target.result, @originalEvent, pastedFilename
               try
                 reader.readAsDataURL item.getAsFile()
               ev.preventDefault()
               break
             if item.type == 'text/plain'
+              if _i == 0 && clipboardData.items.length > 1 && clipboardData.items[1].type.match /^image\//
+                stringIsFilename = true
+                fileType = clipboardData.items[1].type
               item.getAsString (string)=>
-                @_target.trigger 'pasteText', text: string
+                if stringIsFilename
+                  pastedFilename = string
+                  @_target.trigger 'pasteText', text: string, isFilename: true, fileType: fileType, originalEvent: @originalEvent
+                else
+                  @_target.trigger 'pasteText', text: string, originalEvent: @originalEvent
+            if item.type == 'text/rtf'
+              item.getAsString (string)=>
+                @_target.trigger 'pasteTextRich', text: string, originalEvent: @originalEvent
+            if item.type == 'text/html'
+              item.getAsString (string)=>
+                @_target.trigger 'pasteTextHtml', text: string, originalEvent: @originalEvent
         else
           # Firefox & Safari(text-only)
           if -1 != Array.prototype.indexOf.call clipboardData.types, 'text/plain'
             text = clipboardData.getData 'Text'
             setTimeout =>
-              @_target.trigger 'pasteText', text: text
+              @_target.trigger 'pasteText', text: text, originalEvent: @originalEvent
             , 1
           @_checkImagesInContainer (src)=>
-            @_handleImage src
+            @_handleImage src, @originalEvent
       # IE
       if clipboardData = window.clipboardData
         if (text = clipboardData.getData 'Text')?.length
           setTimeout =>
-            @_target.trigger 'pasteText', text: text
+            @_target.trigger 'pasteText', text: text, originalEvent: @originalEvent
             @_target.trigger '_pasteCheckContainerDone'
           , 1
         else
           for file in clipboardData.files
-            @_handleImage URL.createObjectURL(file)
+            @_handleImage URL.createObjectURL(file), @originalEvent
           @_checkImagesInContainer (src)->
       null
 
-  _handleImage: (src)->
+  _handleImage: (src, e, name)->
     if src.match /^webkit\-fake\-url\:\/\//
       return @_target.trigger 'pasteImageError',
         message: "You are trying to paste an image in Safari, however we are unable to retieve its data."
@@ -223,7 +241,9 @@ class Paste
           blob: blob
           dataURL: dataURL
           width: loader.width
-          height: loader.height
+          height: loader.height,
+          originalEvent: e,
+          name: name
       @_target.trigger 'pasteImageEnd'
     loader.onerror = =>
       @_target.trigger 'pasteImageError',

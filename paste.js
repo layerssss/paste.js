@@ -257,21 +257,29 @@ https://github.com/layerssss/paste.js
       this._target = $(this._target).addClass('pastable');
       this._container.on('paste', (function(_this) {
         return function(ev) {
-          var clipboardData, file, item, j, k, len, len1, reader, ref, ref1, ref2, ref3, text;
+          var _i, clipboardData, file, fileType, item, j, k, l, len, len1, len2, pastedFilename, reader, ref, ref1, ref2, ref3, ref4, stringIsFilename, text;
           if (ev.currentTarget !== ev.target) {
             return ev.preventDefault();
           }
+          _this.originalEvent = (ev.originalEvent !== null ? ev.originalEvent : null);
           _this._paste_event_fired = true;
           if (((ref = ev.originalEvent) != null ? ref.clipboardData : void 0) != null) {
             clipboardData = ev.originalEvent.clipboardData;
             if (clipboardData.items) {
+              pastedFilename = null;
+              _this.originalEvent.pastedTypes = [];
               ref1 = clipboardData.items;
               for (j = 0, len = ref1.length; j < len; j++) {
                 item = ref1[j];
+                _this.originalEvent.pastedTypes.push(item.type);
+              }
+              ref2 = clipboardData.items;
+              for (_i = k = 0, len1 = ref2.length; k < len1; _i = ++k) {
+                item = ref2[_i];
                 if (item.type.match(/^image\//)) {
                   reader = new FileReader();
                   reader.onload = function(event) {
-                    return _this._handleImage(event.target.result);
+                    return _this._handleImage(event.target.result, _this.originalEvent, pastedFilename);
                   };
                   try {
                     reader.readAsDataURL(item.getAsFile());
@@ -280,9 +288,40 @@ https://github.com/layerssss/paste.js
                   break;
                 }
                 if (item.type === 'text/plain') {
+                  if (_i === 0 && clipboardData.items.length > 1 && clipboardData.items[1].type.match(/^image\//)) {
+                    stringIsFilename = true;
+                    fileType = clipboardData.items[1].type;
+                  }
                   item.getAsString(function(string) {
-                    return _this._target.trigger('pasteText', {
-                      text: string
+                    if (stringIsFilename) {
+                      pastedFilename = string;
+                      return _this._target.trigger('pasteText', {
+                        text: string,
+                        isFilename: true,
+                        fileType: fileType,
+                        originalEvent: _this.originalEvent
+                      });
+                    } else {
+                      return _this._target.trigger('pasteText', {
+                        text: string,
+                        originalEvent: _this.originalEvent
+                      });
+                    }
+                  });
+                }
+                if (item.type === 'text/rtf') {
+                  item.getAsString(function(string) {
+                    return _this._target.trigger('pasteTextRich', {
+                      text: string,
+                      originalEvent: _this.originalEvent
+                    });
+                  });
+                }
+                if (item.type === 'text/html') {
+                  item.getAsString(function(string) {
+                    return _this._target.trigger('pasteTextHtml', {
+                      text: string,
+                      originalEvent: _this.originalEvent
                     });
                   });
                 }
@@ -292,28 +331,30 @@ https://github.com/layerssss/paste.js
                 text = clipboardData.getData('Text');
                 setTimeout(function() {
                   return _this._target.trigger('pasteText', {
-                    text: text
+                    text: text,
+                    originalEvent: _this.originalEvent
                   });
                 }, 1);
               }
               _this._checkImagesInContainer(function(src) {
-                return _this._handleImage(src);
+                return _this._handleImage(src, _this.originalEvent);
               });
             }
           }
           if (clipboardData = window.clipboardData) {
-            if ((ref2 = (text = clipboardData.getData('Text'))) != null ? ref2.length : void 0) {
+            if ((ref3 = (text = clipboardData.getData('Text'))) != null ? ref3.length : void 0) {
               setTimeout(function() {
                 _this._target.trigger('pasteText', {
-                  text: text
+                  text: text,
+                  originalEvent: _this.originalEvent
                 });
                 return _this._target.trigger('_pasteCheckContainerDone');
               }, 1);
             } else {
-              ref3 = clipboardData.files;
-              for (k = 0, len1 = ref3.length; k < len1; k++) {
-                file = ref3[k];
-                _this._handleImage(URL.createObjectURL(file));
+              ref4 = clipboardData.files;
+              for (l = 0, len2 = ref4.length; l < len2; l++) {
+                file = ref4[l];
+                _this._handleImage(URL.createObjectURL(file), _this.originalEvent);
               }
               _this._checkImagesInContainer(function(src) {});
             }
@@ -323,7 +364,7 @@ https://github.com/layerssss/paste.js
       })(this));
     }
 
-    Paste.prototype._handleImage = function(src) {
+    Paste.prototype._handleImage = function(src, e, name) {
       var loader;
       if (src.match(/^webkit\-fake\-url\:\/\//)) {
         return this._target.trigger('pasteImageError', {
@@ -351,7 +392,9 @@ https://github.com/layerssss/paste.js
               blob: blob,
               dataURL: dataURL,
               width: loader.width,
-              height: loader.height
+              height: loader.height,
+              originalEvent: e,
+              name: name
             });
           }
           return _this._target.trigger('pasteImageEnd');
