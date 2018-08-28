@@ -146,7 +146,7 @@ https://github.com/layerssss/paste.js
       paste = new Paste(createHiddenEditable().appendTo(nonInputable), nonInputable);
       $(nonInputable).on('click', (function(_this) {
         return function(ev) {
-          if (!isFocusable(ev.target, false)) {
+          if (!(isFocusable(ev.target, false) || window.getSelection().toString())) {
             return paste._container.focus();
           }
         };

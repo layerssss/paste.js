@@ -107,7 +107,7 @@ class Paste
   @mountNonInputable: (nonInputable)->
     paste = new Paste createHiddenEditable().appendTo(nonInputable), nonInputable
     $(nonInputable).on 'click', (ev)=>
-      paste._container.focus() unless isFocusable ev.target, false
+      paste._container.focus() unless isFocusable(ev.target, false) or window.getSelection().toString()
 
     paste._container.on 'focus', => $(nonInputable).addClass 'pastable-focus'
     paste._container.on 'blur', => $(nonInputable).removeClass 'pastable-focus'
