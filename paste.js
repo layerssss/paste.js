@@ -356,7 +356,9 @@ https://github.com/layerssss/paste.js
                 file = ref4[l];
                 _this._handleImage(URL.createObjectURL(file), _this.originalEvent);
               }
-              _this._checkImagesInContainer(function(src) {});
+              _this._checkImagesInContainer(function(src) {
+                return _this._handleImage(src, _this.originalEvent);
+              });
             }
           }
           return null;
