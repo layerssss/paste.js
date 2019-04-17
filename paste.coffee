@@ -218,7 +218,8 @@ class Paste
         else
           for file in clipboardData.files
             @_handleImage URL.createObjectURL(file), @originalEvent
-          @_checkImagesInContainer (src)->
+          @_checkImagesInContainer (src)=>
+            @_handleImage src, @originalEvent
       null
 
   _handleImage: (src, e, name)->
